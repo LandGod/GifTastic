@@ -47,5 +47,10 @@ $(document).ready(() => {
         $('#button-row').append(buildButton(defaultTerms[i]));
     };
 
+    //Click handler for all buttons that should grab gifs
+    $(document).on('click', '.gif-button', function() {
+        $('#gif-display').append(buildGif(makeAPICall($(this).val())));
+    });
+
 });
 
