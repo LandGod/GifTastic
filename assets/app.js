@@ -17,8 +17,30 @@ const apiKey = "Jj5UaTZxJO2xNOMoaP3l24tTEnxOPuNG";
 const defaultTerms = ['cats', 'dogs', 'bunny', 'fox', 'skunk', 'deer', 'chinchilla', 'sugar glider', 'tapier', 'sloth', 'badger', 
     'snake', 'ermin', 'mink', 'wolf', 'cow'];
 
-function buildAPICall (keyWord, offset=0, resultNum=10) {
+function buildAPICall (keyWord, offset, resultNum) {
     return `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${keyWord}&limit=${resultNum}&offset=${offset}&lang=en`;
+};
+
+function makeAPICall (keyword, offset=0, resultNum=10) {
+    let requestURL = buildAPICall(keyword, offset, resultNum);
+    console.log(requestURL);
+
+    $.ajax({
+        url: requestURL,
+        method: "GET"
+      }).then(function(response) {
+
+        $('#gif-display').empty();
+
+        for (let i = 0; i < response.data.length; i++) {
+            let gifObj = response.data[i];
+            let gifURL = gifObj.embed_url;
+            let freezeFrame = gifObj.images.original_still.url;
+            let gifRate = gifObj.rating;
+            
+            $('#gif-display').append(buildGif(gifURL, freezeFrame, gifRate));
+        };
+      });
 };
 
 function buildButton (term) {
@@ -49,7 +71,8 @@ $(document).ready(() => {
 
     //Click handler for all buttons that should grab gifs
     $(document).on('click', '.gif-button', function() {
-        $('#gif-display').append(buildGif(makeAPICall($(this).val())));
+        console.log(`$(this) = ${$(this).attr('search-term')}`);
+        $('#gif-display').append(buildGif(makeAPICall($(this).attr('search-term'))));
     });
 
 });
